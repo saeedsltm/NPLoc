@@ -1,0 +1,96 @@
+---
+#============================ Define study area for both events and stations
+StudyArea:
+    lat: 38.45 # central latitude of the study area in degree
+    lon: 46.75 # central longitude of the study area in degree
+    maxRadius: 150 # radius in km
+#============================ Input data directories and splitting properties
+Data:
+    catalogFile : "DB/RSS/Aharr-Va_Local/results/location/hypoDD/hypodd_unw.out"
+    xyzmFileTrain : "DB/RSS/Aharr-Va_Local/results/location/hypoDD/xyzm_unw.dat"
+    xyzmFileTest : "DB/RSS/Aharr-Va_Local/results/location/hypoDD/xyzm_unw.dat"
+    stationsFile : "DB/RSS/Aharr-Va_Local/stations.csv"
+    rndID: 0
+    testSize: 30
+    maxSparsity: 75
+#============================ Define extra targets
+ExtraTargets:
+    horizontal_error: true
+    depth_error: true
+    azimuthal_gap: true
+#============================ Define scoring metric used in estimator
+Scoring:
+    metric: "r2"
+#============================ Define K-Fold validation properties
+KFold:
+    rndID: 0
+    nSplits: 10
+#============================ Define properties for dimension reduction
+DimReducer:
+    dim_reduce_params:
+        # n_components: loguniform(0.75, 0.95)
+#============================ Define HistGradientBoostingRegressor properties
+Regressor:
+    rndID: 0
+    loss: "squared_error"
+    regressor_params:
+        max_depth: loguniform_int(2, 100)
+        learning_rate: loguniform(5e-2, 15e-2)
+        max_iter: loguniform_int(50, 150)
+        l2_regularization: loguniform(1e-3, 1e2)
+#============================ Define hyperparameter tuning method
+RandomizedSearchCV:
+    rndID: 0
+    n_iter: 75
+    scoring: null # r2, explained_variance, null (estimator scoring)
+    verbosity: 0
+#============================ Define properties for plotting figures
+Figures:
+    corrMatrix: true
+    maxErrorLoc: 5
+    incErrorLoc: 0.1
+    maxErrorMag: 1.0
+    incErrorMag: 0.05
+    maxErrorTim: 0.5
+    incErrorTim: 0.01
+    maxErrorGap: 10
+    incErrorGap: 0.5
+    misfit:
+        xLim: [-20.0, 20.0]
+        yLim: [-25.0, 10.0]
+        xGridPts: 100
+        yGridPts: 100
+        errorMaxHorizontal: 5.0
+        errorMaxDepth: 5.0
+        errorMaxMagnitude: 0.5
+        errorMaxOriginTime: 1.0
+        errorMaxERH: 0.1
+        errorMaxERZ: 0.1
+        errorMaxGap: 30.0
+    histBounds:
+        Lon: 15.0
+        Lat: 15.0
+        Dep: 15.0
+        Mag: 1.0
+        ORT: 5.0
+        ERH: 5.0
+        ERZ: 5.0
+        GAP: 20.0
+    evaluationBounds:
+        Lon: [2.0, 5.0]
+        Lat: [2.0, 5.0]
+        Dep: [2.0, 5.0]
+        Mag: [0.2, 0.5]
+        ORT: [1.0, 3.0]
+        ERH: [1.0, 3.0]
+        ERZ: [1.0, 3.0]
+        GAP: [10.0, 20.0]
+    maeMisfitBounds:
+        Lon: [0, 2]
+        Lat: [0, 2]
+        Dep: [0, 2]
+        Mag: 1.0
+        ORT: [0, 1]
+        ERH: [0, 0.1]
+        ERZ: [0, 0.1]
+        GAP: [0, 30]
